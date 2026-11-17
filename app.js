@@ -7,6 +7,19 @@ const featuredGrid = document.getElementById("featuredGrid");
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const niceDate = value => value ? new Date(value + (value.length === 10 ? "T00:00:00" : "")).toLocaleDateString() : "Not specified";
 const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+function whatsappShareUrl(x) {
+  const pageUrl = window.location.origin + window.location.pathname;
+  const text = [
+    x.title,
+    "Organisation: " + (x.organization || "Not specified"),
+    "Category: " + (x.category || "Opportunity"),
+    "Deadline: " + niceDate(x.deadline),
+    "",
+    "View this opportunity on IMI DIGITAL HUB:",
+    pageUrl
+  ].join("\n");
+  return "https://wa.me/?text=" + encodeURIComponent(text);
+}
 function filteredItems() {
   return opportunities.filter(x =>
     (!x.deadline || x.deadline >= localToday()) &&
@@ -30,7 +43,7 @@ function render() {
       ${x.eligibility ? `<p><strong>Eligibility:</strong> ${escapeHtml(x.eligibility)}</p>` : ""}
       ${x.benefits ? `<p><strong>Benefits:</strong> ${escapeHtml(x.benefits)}</p>` : ""}
       ${x.application_instructions ? `<p><strong>How to apply:</strong> ${escapeHtml(x.application_instructions)}</p>` : ""}
-      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div>
+      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a>
     </article>`;
   }).join("");
   empty.hidden = items.length !== 0;
