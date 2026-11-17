@@ -19,7 +19,43 @@ async function loadOpportunity() {
   if (!id) { root.textContent = "No opportunity was specified. Please return to the opportunities list."; return; }
   const {data:x,error} = await db.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,is_published").eq("id",id).eq("is_published",true).maybeSingle();
   if (error || !x) { root.textContent = "This opportunity could not be found. It may have been unpublished or the link may be incorrect."; return; }
-  document.title = x.title + " | IMI DIGITAL HUB";
+  const pageTitle = x.title + " | IMI DIGITAL HUB";
+  const plainDescription = String(x.description || x.title).replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim().slice(0, 160);
+  const canonicalUrl = window.location.origin + window.location.pathname + "?id=" + encodeURIComponent(x.id);
+  document.title = pageTitle;
+  function setMeta(selector, attribute, value) {
+    const node = document.querySelector(selector);
+    if (node) node.setAttribute(attribute, value);
+  }
+  setMeta('meta[name="description"]', "content", plainDescription);
+  setMeta('meta[property="og:title"]', "content", pageTitle);
+  setMeta('meta[property="og:description"]', "content", plainDescription);
+  setMeta('meta[property="og:url"]', "content", canonicalUrl);
+  setMeta('meta[name="twitter:title"]', "content", pageTitle);
+  setMeta('meta[name="twitter:description"]', "content", plainDescription);
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.rel = "canonical";
+    document.head.appendChild(canonical);
+  }
+  canonical.href = canonicalUrl;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": pageTitle,
+    "description": plainDescription,
+    "url": canonicalUrl,
+    "publisher": { "@type": "Organization", "name": "IMI DIGITAL HUB" }
+  };
+  let structuredScript = document.getElementById("opportunityStructuredData");
+  if (!structuredScript) {
+    structuredScript = document.createElement("script");
+    structuredScript.id = "opportunityStructuredData";
+    structuredScript.type = "application/ld+json";
+    document.head.appendChild(structuredScript);
+  }
+  structuredScript.textContent = JSON.stringify(structuredData);
   const fields = [
     ["Location",x.location],["Employment type",x.employment_type],["Deadline",niceDate(x.deadline)],
     ["Salary / funding",x.salary_or_funding],["Eligibility",x.eligibility],["Benefits",x.benefits],
