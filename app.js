@@ -18,7 +18,7 @@ function render() {
     const details = [x.location, x.employment_type].filter(Boolean).map(escapeHtml).join(" • ");
     const link = x.application_url || x.source_url;
     return `<article class="opp-card">
-      <div class="opp-top"><span class="tag">${escapeHtml(x.category)}</span><span class="demo-tag" style="background:#e7f7ed;color:#176b3a">VERIFIED SOURCE</span></div>
+      <div class="opp-top"><span class="tag">${escapeHtml(x.category)}</span><span class="demo-tag" style="background:#e7f7ed;color:#176b3a">PUBLISHED</span></div>
       <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
       <p>${escapeHtml(x.description).slice(0,260)}${x.description && x.description.length>260 ? "…" : ""}</p>
