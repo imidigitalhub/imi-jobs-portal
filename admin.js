@@ -2,7 +2,7 @@ const db = window.supabase.createClient(window.IMI_SUPABASE_URL, window.IMI_SUPA
 const $ = id => document.getElementById(id);
 const safe = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function message(id,text){$(id).textContent=text;$(id).classList.remove("hidden");}
-function clearMessage(id){$(id).textContent="";$(id).classList.add("hidden");
+function clearMessage(id){$(id).textContent="";$(id).classList.add("hidden");}
 function localToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
 async function isAdmin(user){const {data,error}=await db.from("portal_admins").select("user_id").eq("user_id",user.id).maybeSingle();return !error && !!data;}
 async function showDashboard(user){
