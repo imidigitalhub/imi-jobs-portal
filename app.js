@@ -37,7 +37,7 @@ function telegramShareUrl(x) {
   return "https://t.me/share/url?url=" + encodeURIComponent(pageUrl) + "&text=" + encodeURIComponent(text);
 }
 function facebookShareUrl(x) {
-  const pageUrl = window.location.origin + window.location.pathname;
+  const pageUrl = opportunityUrl(x);
   const quote = [
     x.title,
     "Organisation: " + (x.organization || "Not specified"),
