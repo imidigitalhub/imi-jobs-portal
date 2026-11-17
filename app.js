@@ -22,6 +22,10 @@ function render() {
       <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
       <p>${escapeHtml(x.description).slice(0,260)}${x.description && x.description.length>260 ? "…" : ""}</p>
+      ${x.salary_or_funding ? `<p><strong>Salary / funding:</strong> ${escapeHtml(x.salary_or_funding)}</p>` : ""}
+      ${x.eligibility ? `<p><strong>Eligibility:</strong> ${escapeHtml(x.eligibility)}</p>` : ""}
+      ${x.benefits ? `<p><strong>Benefits:</strong> ${escapeHtml(x.benefits)}</p>` : ""}
+      ${x.application_instructions ? `<p><strong>How to apply:</strong> ${escapeHtml(x.application_instructions)}</p>` : ""}
       <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div>
     </article>`;
   }).join("");
@@ -37,7 +41,7 @@ function setCategory(value) {
 }
 async function loadOpportunities() {
   grid.innerHTML = '<p>Loading published opportunities…</p>';
-  const { data, error } = await supabaseClient.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,application_url,source_url,deadline,created_at").eq("is_published", true).order("created_at", {ascending:false});
+  const { data, error } = await supabaseClient.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,application_url,source_url,deadline,created_at").eq("is_published", true).order("created_at", {ascending:false});
   if (error) {
     grid.innerHTML = '<p>We could not load opportunities right now. Please refresh the page later.</p>';
     document.getElementById("resultCount").textContent = "Unable to load listings";
