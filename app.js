@@ -7,6 +7,7 @@ const niceDate = value => value ? new Date(value + (value.length === 10 ? "T00:0
 const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 function filteredItems() {
   return opportunities.filter(x =>
+    (!x.deadline || x.deadline >= localToday()) &&
     (category === "All" || x.category === category) &&
     (!query || [x.title,x.organization,x.category,x.description,x.location].join(" ").toLowerCase().includes(query)) &&
     (!locationFilter || x.location === locationFilter || (locationFilter === "International" && x.location !== "Nigeria"))
