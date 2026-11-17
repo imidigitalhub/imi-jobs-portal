@@ -1,0 +1,42 @@
+const db = window.supabase.createClient(window.IMI_SUPABASE_URL, window.IMI_SUPABASE_PUBLISHABLE_KEY);
+const root = document.getElementById("opportunityDetail");
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const niceDate = value => value ? new Date(value + (value.length === 10 ? "T00:00:00" : "")).toLocaleDateString() : "Not specified";
+const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+const pageUrl = window.location.href;
+function shareLinks(x) {
+  const message = [x.title,"Organisation: "+(x.organization || "Not specified"),"Category: "+(x.category || "Opportunity"),"Deadline: "+niceDate(x.deadline),"","View this opportunity on IMI DIGITAL HUB:",pageUrl].join("\n");
+  const encodedUrl = encodeURIComponent(pageUrl);
+  const encodedMessage = encodeURIComponent(message);
+  return `<div class="detail-actions">
+    <a class="whatsapp-share" href="https://wa.me/?text=${encodedMessage}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+    <a class="telegram-share" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedMessage}" target="_blank" rel="noopener noreferrer">Share on Telegram</a>
+    <a class="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodeURIComponent(message)}" target="_blank" rel="noopener noreferrer">Share on Facebook</a>
+  </div>`;
+}
+async function loadOpportunity() {
+  const id = new URLSearchParams(window.location.search).get("id");
+  if (!id) { root.textContent = "No opportunity was specified. Please return to the opportunities list."; return; }
+  const {data:x,error} = await db.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,is_published").eq("id",id).eq("is_published",true).maybeSingle();
+  if (error || !x) { root.textContent = "This opportunity could not be found. It may have been unpublished or the link may be incorrect."; return; }
+  document.title = x.title + " | IMI DIGITAL HUB";
+  const fields = [
+    ["Location",x.location],["Employment type",x.employment_type],["Deadline",niceDate(x.deadline)],
+    ["Salary / funding",x.salary_or_funding],["Eligibility",x.eligibility],["Benefits",x.benefits],
+    ["Application instructions",x.application_instructions],["Description",x.description]
+  ].filter(([,v])=>v);
+  const apply = x.application_url || x.source_url;
+  root.className = "detail-card";
+  root.innerHTML = `
+    <a class="back-btn" href="index.html#opportunities">← Back to opportunities</a>
+    <div style="margin-top:22px"><span class="tag">${escapeHtml(x.category)}</span></div>
+    ${x.image_url ? `<img src="${escapeHtml(x.image_url)}" alt="${escapeHtml(x.title)}" style="width:100%;max-height:360px;object-fit:cover;border-radius:10px;margin-top:20px">` : ""}
+    <h1>${escapeHtml(x.title)}</h1>
+    <p class="detail-org">${escapeHtml(x.organization)}</p>
+    <div class="detail-fields">${fields.map(([label,value])=>`<div class="detail-field"><strong>${escapeHtml(label)}</strong><div class="${label==="Description"?"detail-description":""}">${escapeHtml(label==="Deadline"?value:value)}</div></div>`).join("")}</div>
+    <div class="detail-actions">${apply ? `<a class="apply-btn" href="${escapeHtml(apply)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}<a class="back-btn" href="index.html#opportunities">Browse more opportunities</a></div>
+    ${shareLinks(x)}
+    <p class="demo-note">Confirm eligibility, deadlines and application details with the official organisation before applying.</p>`;
+}
+document.getElementById("year").textContent = new Date().getFullYear();
+loadOpportunity();
