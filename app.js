@@ -20,6 +20,19 @@ function whatsappShareUrl(x) {
   ].join("\n");
   return "https://wa.me/?text=" + encodeURIComponent(text);
 }
+function telegramShareUrl(x) {
+  const pageUrl = window.location.origin + window.location.pathname;
+  const text = [
+    x.title,
+    "Organisation: " + (x.organization || "Not specified"),
+    "Category: " + (x.category || "Opportunity"),
+    "Deadline: " + niceDate(x.deadline),
+    "",
+    "View this opportunity on IMI DIGITAL HUB:",
+    pageUrl
+  ].join("\n");
+  return "https://t.me/share/url?url=" + encodeURIComponent(pageUrl) + "&text=" + encodeURIComponent(text);
+}
 function filteredItems() {
   return opportunities.filter(x =>
     (!x.deadline || x.deadline >= localToday()) &&
@@ -43,7 +56,7 @@ function render() {
       ${x.eligibility ? `<p><strong>Eligibility:</strong> ${escapeHtml(x.eligibility)}</p>` : ""}
       ${x.benefits ? `<p><strong>Benefits:</strong> ${escapeHtml(x.benefits)}</p>` : ""}
       ${x.application_instructions ? `<p><strong>How to apply:</strong> ${escapeHtml(x.application_instructions)}</p>` : ""}
-      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a>
+      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a>
     </article>`;
   }).join("");
   empty.hidden = items.length !== 0;
@@ -68,7 +81,7 @@ function renderFeatured() {
       <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
       <p>${escapeHtml(x.description).slice(0,220)}${x.description && x.description.length>220 ? "…" : ""}</p>
-      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a>
+      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a>
     </article>`;
   }).join("");
 }
