@@ -7,8 +7,11 @@ const featuredGrid = document.getElementById("featuredGrid");
 const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const niceDate = value => value ? new Date(value + (value.length === 10 ? "T00:00:00" : "")).toLocaleDateString() : "Not specified";
 const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+function opportunityUrl(x) {
+  return new URL("opportunity.html?id=" + encodeURIComponent(x.id), window.location.href).href;
+}
 function whatsappShareUrl(x) {
-  const pageUrl = window.location.origin + window.location.pathname;
+  const pageUrl = opportunityUrl(x);
   const text = [
     x.title,
     "Organisation: " + (x.organization || "Not specified"),
@@ -21,7 +24,7 @@ function whatsappShareUrl(x) {
   return "https://wa.me/?text=" + encodeURIComponent(text);
 }
 function telegramShareUrl(x) {
-  const pageUrl = window.location.origin + window.location.pathname;
+  const pageUrl = opportunityUrl(x);
   const text = [
     x.title,
     "Organisation: " + (x.organization || "Not specified"),
@@ -67,7 +70,7 @@ function render() {
       ${x.eligibility ? `<p><strong>Eligibility:</strong> ${escapeHtml(x.eligibility)}</p>` : ""}
       ${x.benefits ? `<p><strong>Benefits:</strong> ${escapeHtml(x.benefits)}</p>` : ""}
       ${x.application_instructions ? `<p><strong>How to apply:</strong> ${escapeHtml(x.application_instructions)}</p>` : ""}
-      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a><a class="facebook-share" href="${escapeHtml(facebookShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Facebook">↗ Share on Facebook</a>
+      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span><a class="details-link" href="${escapeHtml(opportunityUrl(x))}">View details ↗</a>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a><a class="facebook-share" href="${escapeHtml(facebookShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Facebook">↗ Share on Facebook</a>
     </article>`;
   }).join("");
   empty.hidden = items.length !== 0;
@@ -92,7 +95,7 @@ function renderFeatured() {
       <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
       <p>${escapeHtml(x.description).slice(0,220)}${x.description && x.description.length>220 ? "…" : ""}</p>
-      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a><a class="facebook-share" href="${escapeHtml(facebookShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Facebook">↗ Share on Facebook</a>
+      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span><a class="details-link" href="${escapeHtml(opportunityUrl(x))}">View details ↗</a>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a><a class="facebook-share" href="${escapeHtml(facebookShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Facebook">↗ Share on Facebook</a>
     </article>`;
   }).join("");
 }
