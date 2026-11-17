@@ -2,7 +2,7 @@ const db = window.supabase.createClient(window.IMI_SUPABASE_URL, window.IMI_SUPA
 const $ = id => document.getElementById(id);
 const safe = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function message(id,text){$(id).textContent=text;$(id).classList.remove("hidden");}
-function clearMessage(id){$(id).textContent="";$(id).classList.add("hidden");}
+function clearMessage(id){$(id).textContent="";$(id).classList.add("hidden");}\nfunction localToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;}
 async function isAdmin(user){const {data,error}=await db.from("portal_admins").select("user_id").eq("user_id",user.id).maybeSingle();return !error && !!data;}
 async function showDashboard(user){
  if(!await isAdmin(user)){await db.auth.signOut();message("loginMessage","This account is not authorised as a portal administrator.");return;}
@@ -13,7 +13,7 @@ async function loadAdminListings(){
  const {data,error}=await db.from("opportunities").select("*").order("created_at",{ascending:false});
  if(error){$("adminList").textContent="Could not load listings: "+error.message;return;}
  if(!data.length){$("adminList").textContent="No opportunities have been added yet.";return;}
- $("adminList").innerHTML=data.map(x=>`<div class="admin-item"><div><strong>${safe(x.title)}</strong><p>${safe(x.category)} · ${safe(x.organization)} · ${!x.is_published?"Draft":(x.deadline && x.deadline < new Date().toLocaleDateString("en-CA")?"Expired":"Published")}</p></div><div class="admin-actions"><button class="admin-btn secondary" data-edit="${x.id}">Edit</button><button class="admin-btn secondary" data-toggle="${x.id}" data-published="${x.is_published}">${x.is_published?"Unpublish":"Publish"}</button><button class="admin-btn danger" data-delete="${x.id}">Delete</button></div></div>`).join("");
+ $("adminList").innerHTML=data.map(x=>`<div class="admin-item"><div><strong>${safe(x.title)}</strong><p>${safe(x.category)} · ${safe(x.organization)} · ${!x.is_published?"Draft":(x.deadline && x.deadline < localToday()?"Expired":"Published")}</p></div><div class="admin-actions"><button class="admin-btn secondary" data-edit="${x.id}">Edit</button><button class="admin-btn secondary" data-toggle="${x.id}" data-published="${x.is_published}">${x.is_published?"Unpublish":"Publish"}</button><button class="admin-btn danger" data-delete="${x.id}">Delete</button></div></div>`).join("");
  $("adminList").querySelectorAll("[data-edit]").forEach(b=>b.addEventListener("click",()=>editListing(data.find(x=>x.id===b.dataset.edit))));
  $("adminList").querySelectorAll("[data-toggle]").forEach(b=>b.addEventListener("click",()=>togglePublish(b.dataset.toggle,b.dataset.published==="true")));
  $("adminList").querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteListing(b.dataset.delete)));
