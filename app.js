@@ -68,7 +68,7 @@ function renderFeatured() {
       <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
       <p>${escapeHtml(x.description).slice(0,220)}${x.description && x.description.length>220 ? "…" : ""}</p>
-      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div>
+      <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">View opportunity ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a>
     </article>`;
   }).join("");
 }
