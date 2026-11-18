@@ -34,3 +34,6 @@ button,a,select{touch-action:manipulation}
 .save-opportunity-btn:hover,.save-opportunity-btn.is-saved{background:#e8f8f5;border-color:#1aa6a0;color:#126d68}
 #showSavedBtn.active{background:#e8f8f5;border-color:#1aa6a0;color:#126d68}
 @media(max-width:620px){.save-opportunity-btn{min-height:44px}}
+
+/* Contributor acknowledgement */
+.contributor-credit{display:block;margin-top:5px;color:#168a8b;font-size:11px;font-weight:700}
