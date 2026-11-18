@@ -20,8 +20,8 @@ async function loadOpportunity() {
   const {data:x,error} = await db.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,is_published").eq("id",id).eq("is_published",true).maybeSingle();
   if (error || !x) { root.textContent = "This opportunity could not be found. It may have been unpublished or the link may be incorrect."; return; }
   const pageTitle = x.title + " | IMI DIGITAL HUB";
-  const plainDescription = String(x.description || x.title).replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim().slice(0, 160);
-  const canonicalUrl = window.location.origin + window.location.pathname.replace(/opportunity\\.html$/, "opportunities/" + encodeURIComponent(x.id) + "/").replace(/\\/$/, "") + (window.location.pathname.endsWith("/") ? "" : "/");
+  const plainDescription = String(x.description || x.title).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+  const canonicalUrl = window.location.origin + window.location.pathname.replace(/opportunity\.html$/, "opportunities/" + encodeURIComponent(x.id) + "/");
   document.title = pageTitle;
   function setMeta(selector, attribute, value) {
     const node = document.querySelector(selector);
