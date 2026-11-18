@@ -27,3 +27,10 @@ button,a,select{touch-action:manipulation}
 .load-more-btn{display:block;margin:28px auto 0;padding:12px 22px;border:1px solid var(--blue);border-radius:8px;background:#fff;color:var(--blue);font:inherit;font-size:12px;font-weight:800;cursor:pointer;min-height:44px}
 .load-more-btn:hover{background:#eef8fa}
 .load-more-btn[hidden]{display:none}
+
+
+/* Save opportunity bookmarks */
+.save-opportunity-btn{align-self:flex-start;margin:10px 0 0;padding:9px 12px;min-height:40px;border:1px solid #cbdde3;border-radius:7px;background:#fff;color:#176b87;font:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.save-opportunity-btn:hover,.save-opportunity-btn.is-saved{background:#e8f8f5;border-color:#1aa6a0;color:#126d68}
+#showSavedBtn.active{background:#e8f8f5;border-color:#1aa6a0;color:#126d68}
+@media(max-width:620px){.save-opportunity-btn{min-height:44px}}
