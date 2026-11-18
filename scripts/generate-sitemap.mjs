@@ -9,7 +9,7 @@ if (!supabaseUrl || !key) throw new Error("Supabase public configuration was not
 
 const base = "https://imidigitalhub.github.io/imi-jobs-portal/";
 const endpoint = new URL("/rest/v1/opportunities", supabaseUrl);
-endpoint.searchParams.set("select", "id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,created_at,updated_at");
+endpoint.searchParams.set("select", "id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,created_at,updated_at,contributor_name");
 endpoint.searchParams.set("is_published", "eq.true");
 endpoint.searchParams.set("order", "created_at.asc");
 
@@ -109,7 +109,7 @@ ${x.image_url ? `<meta name="twitter:image" content="${esc(x.image_url)}">` : ""
 <header class="topbar"><a class="brand" href="../../"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Jobs &amp; Opportunities</small></span></a><nav><a href="../../#opportunities">Explore</a><a href="../../#categories">Categories</a><a href="../../#about">About</a></nav></header>
 <main class="seo-page">
 <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../">Home</a> › <a href="../../#opportunities">Opportunities</a> › <span>${esc(x.title)}</span></nav>
-<article><p><span class="tag">${esc(x.category || "Opportunity")}</span></p>${image}<h1>${esc(x.title)}</h1><p><strong>${esc(x.organization || "")}</strong></p>
+<article><p><span class="tag">${esc(x.category || "Opportunity")}</span></p>${image}<h1>${esc(x.title)}</h1><p><strong>${esc(x.organization || "")}</strong></p>${x.contributor_name ? `<p class="contributor-credit">Opportunity shared by ${esc(x.contributor_name)}</p>` : ""}
 ${bodyFields}
 ${applyUrl ? `<p><a class="seo-apply" href="${esc(applyUrl)}" data-analytics-event="application_click" data-opportunity-id="${esc(x.id)}" data-opportunity-title="${esc(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a></p>` : ""}
 ${shareButtons}\n<p class="demo-note">Confirm eligibility, deadlines and application details with the official organisation before applying.</p>
