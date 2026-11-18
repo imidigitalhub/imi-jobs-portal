@@ -1,5 +1,7 @@
 const supabaseClient = window.supabase.createClient(window.IMI_SUPABASE_URL, window.IMI_SUPABASE_PUBLISHABLE_KEY);
 let category = "All", query = "", locationFilter = "", employmentFilter = "", opportunities = [];
+let visibleLimit = 9;
+const pageSize = 9;
 const grid = document.getElementById("opportunityGrid");
 const empty = document.getElementById("emptyState");
 const featuredSection = document.getElementById("featuredSection");
@@ -65,6 +67,7 @@ function filteredItems() {
 }
 function render() {
   let items = filteredItems();
+  const totalItems = items.length;
   const sortBy = document.getElementById("sortFilter").value;
   if (sortBy === "title") items.sort((a,b) => a.title.localeCompare(b.title));
   if (sortBy === "deadline") items.sort((a,b) => {
@@ -72,7 +75,8 @@ function render() {
     if (!b.deadline) return -1;
     return a.deadline.localeCompare(b.deadline);
   });
-  grid.innerHTML = items.map(x => {
+  const visibleItems = items.slice(0, visibleLimit);
+  grid.innerHTML = visibleItems.map(x => {
     const details = [x.location, x.employment_type].filter(Boolean).map(escapeHtml).join(" • ");
     const link = x.application_url || x.source_url;
     return `<article class="opp-card">
@@ -89,10 +93,16 @@ function render() {
   }).join("");
   empty.hidden = items.length !== 0;
   grid.hidden = items.length === 0;
-  document.getElementById("resultCount").textContent = `${items.length} available opportunit${items.length===1?"y":"ies"}`;
+  document.getElementById("resultCount").textContent = totalItems > visibleItems.length
+    ? `Showing ${visibleItems.length} of ${totalItems} opportunities`
+    : `${totalItems} available opportunit${totalItems===1?"y":"ies"}`;
+  const loadMoreButton = document.getElementById("loadMoreBtn");
+  loadMoreButton.hidden = visibleItems.length >= totalItems;
+  loadMoreButton.textContent = `Load more opportunities (${totalItems - visibleItems.length} remaining)`;
 }
 function setCategory(value) {
   category = value;
+  visibleLimit = pageSize;
   document.querySelectorAll("[data-category]").forEach(b => b.classList.toggle("selected", b.classList.contains("chip") && b.dataset.category === value));
   document.querySelectorAll(".category").forEach(b => b.classList.toggle("active", b.dataset.category === value));
   render();
@@ -139,13 +149,15 @@ document.getElementById("searchForm").addEventListener("submit", e => {
 });
 document.getElementById("searchInput").addEventListener("input", e => {
   query = e.target.value.trim().toLowerCase();
+  visibleLimit = pageSize;
   render();
 });
-document.getElementById("locationFilter").addEventListener("change", e => { locationFilter = e.target.value; render(); });
-document.getElementById("employmentFilter").addEventListener("change", e => { employmentFilter = e.target.value; render(); });
-document.getElementById("sortFilter").addEventListener("change", render);
+document.getElementById("locationFilter").addEventListener("change", e => { locationFilter = e.target.value; visibleLimit = pageSize; render(); });
+document.getElementById("employmentFilter").addEventListener("change", e => { employmentFilter = e.target.value; visibleLimit = pageSize; render(); });
+document.getElementById("sortFilter").addEventListener("change", () => { visibleLimit = pageSize; render(); });
+document.getElementById("loadMoreBtn").addEventListener("click", () => { visibleLimit += pageSize; render(); });
 function clearAllFilters() {
-  query = ""; locationFilter = ""; employmentFilter = ""; category = "All";
+  query = ""; locationFilter = ""; employmentFilter = ""; category = "All"; visibleLimit = pageSize;
   document.getElementById("searchInput").value = "";
   document.getElementById("locationFilter").value = "";
   document.getElementById("employmentFilter").value = "";
