@@ -115,7 +115,8 @@ function render() {
     </article>`;
   }).join("");
   empty.hidden = items.length !== 0;
-  grid.hidden = items.length === 0;\n  if (savedOnly && items.length === 0) { empty.querySelector("h3").textContent = "No saved opportunities yet"; empty.querySelector("p").textContent = "Tap Save opportunity on any listing to keep it here."; } else { empty.querySelector("h3").textContent = "No matching opportunities"; empty.querySelector("p").textContent = "Try another keyword or category."; }
+  grid.hidden = items.length === 0;
+  if (savedOnly && items.length === 0) { empty.querySelector("h3").textContent = "No saved opportunities yet"; empty.querySelector("p").textContent = "Tap Save opportunity on any listing to keep it here."; } else { empty.querySelector("h3").textContent = "No matching opportunities"; empty.querySelector("p").textContent = "Try another keyword or category."; }
   document.getElementById("resultCount").textContent = totalItems > visibleItems.length
     ? `Showing ${visibleItems.length} of ${totalItems} opportunities`
     : `${totalItems} available opportunit${totalItems===1?"y":"ies"}`;
