@@ -127,7 +127,17 @@ document.getElementById("clearFilters").addEventListener("click", () => {
   document.getElementById("locationFilter").value = "";
   setCategory("All");
 });
-document.getElementById("menuBtn").addEventListener("click", () => document.querySelector("nav").classList.toggle("open"));
-document.querySelectorAll("nav a").forEach(a => a.addEventListener("click", () => document.querySelector("nav").classList.remove("open")));
+const menuButton = document.getElementById("menuBtn");
+const mainNav = document.getElementById("mainNav");
+menuButton.addEventListener("click", () => {
+  const isOpen = mainNav.classList.toggle("open");
+  menuButton.setAttribute("aria-expanded", String(isOpen));
+  menuButton.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+});
+document.querySelectorAll("#mainNav a").forEach(a => a.addEventListener("click", () => {
+  mainNav.classList.remove("open");
+  menuButton.setAttribute("aria-expanded", "false");
+  menuButton.setAttribute("aria-label", "Open menu");
+}));
 document.getElementById("year").textContent = new Date().getFullYear();
 loadOpportunities();
