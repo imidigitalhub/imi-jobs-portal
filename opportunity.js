@@ -70,7 +70,7 @@ async function loadOpportunity() {
     <h1>${escapeHtml(x.title)}</h1>
     <p class="detail-org">${escapeHtml(x.organization)}</p>
     <div class="detail-fields">${fields.map(([label,value])=>`<div class="detail-field"><strong>${escapeHtml(label)}</strong><div class="${label==="Description"?"detail-description":""}">${escapeHtml(label==="Deadline"?value:value)}</div></div>`).join("")}</div>
-    <div class="detail-actions">${apply ? `<a class="apply-btn" href="${escapeHtml(apply)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}<a class="back-btn" href="index.html#opportunities">Browse more opportunities</a></div>
+    <div class="detail-actions">${apply ? `<a class="apply-btn" href="${escapeHtml(apply)}" data-analytics-event="application_click" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}<a class="back-btn" href="index.html#opportunities">Browse more opportunities</a></div>
     ${shareLinks(x)}
     <p class="demo-note">Confirm eligibility, deadlines and application details with the official organisation before applying.</p>`;
 }
