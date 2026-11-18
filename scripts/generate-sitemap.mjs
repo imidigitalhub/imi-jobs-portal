@@ -124,6 +124,13 @@ ${shareButtons}\n<p class="demo-note">Confirm eligibility, deadlines and applica
 // Generate dedicated SEO landing pages for the four additional opportunity categories.
 const categoryPages = [
   {
+    category: "Jobs",
+    slug: "jobs",
+    title: "Job Vacancies in Nigeria and Abroad",
+    description: "Find job vacancies in Nigeria and internationally, including graduate jobs, entry-level roles, remote work and experienced-hire opportunities. Check requirements and apply through official sources.",
+    intro: "Explore current job vacancies in Nigeria and abroad, including graduate and entry-level roles, experienced-hire positions and remote opportunities. Review each job's requirements, location and deadline, then use the official employer or recruiter link to confirm details and apply."
+  },
+  {
     category: "Scholarships",
     slug: "scholarships",
     title: "Scholarships in Nigeria and Abroad",
