@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="View and manage the opportunities you have saved on IMI DIGITAL HUB.">
+  <meta name="robots" content="noindex,follow">
+  <meta name="theme-color" content="#102a43">
+  <title>Saved Opportunities | IMI DIGITAL HUB</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="IMI DIGITAL HUB home"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Jobs & Opportunities</small></span></a>
+  <nav id="mainNav"><a href="./">Explore opportunities</a><a href="./#categories">Categories</a><a href="./admin.html">Admin</a></nav>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">☰</button>
+</header>
+<main>
+  <section class="section listings" style="min-height:65vh">
+    <div class="section-heading">
+      <div><span class="eyebrow dark">YOUR PERSONAL LIST</span><h2>Saved opportunities</h2><p>Bookmarks are stored in this browser on this device. They do not sync across devices or browsers.</p></div>
+    </div>
+    <p id="savedStatus" role="status" aria-live="polite">Loading your saved opportunities…</p>
+    <div class="opportunity-grid" id="savedGrid"></div>
+    <div class="empty-state" id="savedEmpty" hidden><span>☆</span><h3>No saved opportunities yet</h3><p>Browse the listings and tap “Save opportunity” to keep a listing here.</p><a class="outline-btn" href="./#opportunities">Explore opportunities</a></div>
+    <p><a class="details-link" href="./#opportunities">← Back to all opportunities</a></p>
+  </section>
+</main>
+<footer><a class="brand footer-brand" href="./"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Building digital possibilities</small></span></a><p>© <span id="year"></span> IMI DIGITAL HUB. All rights reserved.</p><a href="https://imidigitalhub.wordpress.com/">Visit our website ↗</a></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase-config.js"></script>
+<script defer src="saved.js"></script>
+</body>
+</html>
