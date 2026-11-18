@@ -2,6 +2,28 @@ const supabaseClient = window.supabase.createClient(window.IMI_SUPABASE_URL, win
 let category = "All", query = "", locationFilter = "", employmentFilter = "", opportunities = [];
 let visibleLimit = 9;
 const pageSize = 9;
+let savedOnly = false;
+let savedIds = [];
+try { savedIds = JSON.parse(localStorage.getItem("imiSavedOpportunities") || "[]"); } catch { savedIds = []; }
+if (!Array.isArray(savedIds)) savedIds = [];
+function saveButton(x) {
+  const isSaved = savedIds.includes(String(x.id));
+  return `<button class="save-opportunity-btn${isSaved ? " is-saved" : ""}" type="button" data-save-id="${escapeHtml(x.id)}" aria-pressed="${isSaved}" aria-label="${isSaved ? "Remove saved opportunity" : "Save opportunity"}">${isSaved ? "★ Saved" : "☆ Save opportunity"}</button>`;
+}
+function updateSavedControl() {
+  const button = document.getElementById("showSavedBtn");
+  button.textContent = `Saved opportunities (${savedIds.length})`;
+  button.setAttribute("aria-pressed", String(savedOnly));
+  button.classList.toggle("active", savedOnly);
+}
+function toggleSaved(id) {
+  id = String(id);
+  savedIds = savedIds.includes(id) ? savedIds.filter(item => item !== id) : [...savedIds, id];
+  try { localStorage.setItem("imiSavedOpportunities", JSON.stringify(savedIds)); } catch (error) { console.warn("Could not save bookmarks in this browser:", error); }
+  updateSavedControl();
+  render();
+  renderFeatured();
+}
 const grid = document.getElementById("opportunityGrid");
 const empty = document.getElementById("emptyState");
 const featuredSection = document.getElementById("featuredSection");
@@ -50,7 +72,7 @@ function facebookShareUrl(x) {
   return "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(pageUrl) + "&quote=" + encodeURIComponent(quote);
 }
 function filteredItems() {
-  return opportunities.filter(x => {
+  return opportunities.filter(x => {\n    if (savedOnly && !savedIds.includes(String(x.id))) return false;
     const location = String(x.location || "").toLowerCase();
     const employment = String(x.employment_type || "").toLowerCase();
     const searchText = [x.title,x.organization,x.category,x.description,x.location,x.employment_type].join(" ").toLowerCase();
@@ -91,14 +113,13 @@ function render() {
       <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span><a class="details-link" href="${escapeHtml(opportunityUrl(x))}">View details ↗</a>${link ? `<a href="${escapeHtml(link)}" data-analytics-event="application_click" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" data-analytics-event="share_whatsapp" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" data-analytics-event="share_telegram" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a><a class="facebook-share" href="${escapeHtml(facebookShareUrl(x))}" data-analytics-event="share_facebook" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Facebook">↗ Share on Facebook</a>
     </article>`;
   }).join("");
-  empty.hidden = items.length !== 0;
-  grid.hidden = items.length === 0;
+  empty.hidden = items.length !== 0;\n  grid.hidden = items.length === 0;\n  if (savedOnly && items.length === 0) { empty.querySelector("h3").textContent = "No saved opportunities yet"; empty.querySelector("p").textContent = "Tap Save opportunity on any listing to keep it here."; } else { empty.querySelector("h3").textContent = "No matching opportunities"; empty.querySelector("p").textContent = "Try another keyword or category."; }
   document.getElementById("resultCount").textContent = totalItems > visibleItems.length
     ? `Showing ${visibleItems.length} of ${totalItems} opportunities`
     : `${totalItems} available opportunit${totalItems===1?"y":"ies"}`;
   const loadMoreButton = document.getElementById("loadMoreBtn");
   loadMoreButton.hidden = visibleItems.length >= totalItems;
-  loadMoreButton.textContent = `Load more opportunities (${totalItems - visibleItems.length} remaining)`;
+  loadMoreButton.textContent = `Load more opportunities (${totalItems - visibleItems.length} remaining)`;\n  updateSavedControl();
 }
 function setCategory(value) {
   category = value;
@@ -114,7 +135,7 @@ function renderFeatured() {
     const link = x.application_url || x.source_url;
     const details = [x.location, x.employment_type].filter(Boolean).map(escapeHtml).join(" • ");
     return `<article class="opp-card">
-      <div class="opp-top"><span class="tag">${escapeHtml(x.category)}</span><span class="demo-tag" style="background:#fff5df;color:#8a641c">★ FEATURED</span></div>
+      <div class="opp-top"><span class="tag">${escapeHtml(x.category)}</span><span class="demo-tag" style="background:#fff5df;color:#8a641c">★ FEATURED</span></div>${saveButton(x)}
       ${x.image_url ? `<img class="opp-image" src="${escapeHtml(x.image_url)}" alt="${escapeHtml(x.title)}" loading="lazy" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin:10px 0;">` : ""}
       <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
@@ -156,8 +177,18 @@ document.getElementById("locationFilter").addEventListener("change", e => { loca
 document.getElementById("employmentFilter").addEventListener("change", e => { employmentFilter = e.target.value; visibleLimit = pageSize; render(); });
 document.getElementById("sortFilter").addEventListener("change", () => { visibleLimit = pageSize; render(); });
 document.getElementById("loadMoreBtn").addEventListener("click", () => { visibleLimit += pageSize; render(); });
+document.getElementById("showSavedBtn").addEventListener("click", () => {
+  savedOnly = !savedOnly;
+  visibleLimit = pageSize;
+  document.getElementById("opportunities").scrollIntoView({behavior:"smooth"});
+  render();
+});
+[grid, featuredGrid].forEach(container => container.addEventListener("click", event => {
+  const button = event.target.closest("[data-save-id]");
+  if (button) toggleSaved(button.dataset.saveId);
+}));
 function clearAllFilters() {
-  query = ""; locationFilter = ""; employmentFilter = ""; category = "All"; visibleLimit = pageSize;
+  query = ""; locationFilter = ""; employmentFilter = ""; category = "All"; visibleLimit = pageSize; savedOnly = false;
   document.getElementById("searchInput").value = "";
   document.getElementById("locationFilter").value = "";
   document.getElementById("employmentFilter").value = "";
