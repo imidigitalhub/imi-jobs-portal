@@ -121,6 +121,111 @@ ${shareButtons}\n<p class="demo-note">Confirm eligibility, deadlines and applica
   fs.writeFileSync(path.join(outDir,"index.html"), html);
   sitemap.push({loc:pageUrl,lastmod:x.updated_at || x.created_at || "",priority:"0.8"});
 }
+// Generate dedicated SEO landing pages for the four additional opportunity categories.
+const categoryPages = [
+  {
+    category: "Scholarships",
+    slug: "scholarships",
+    title: "Scholarships in Nigeria and Abroad",
+    description: "Explore scholarship opportunities for Nigerian students and applicants worldwide. Review eligibility, funding details, deadlines and official application links.",
+    intro: "Discover scholarship opportunities for Nigerian students and applicants looking to study in Nigeria or abroad. Browse available listings, check eligibility requirements and funding details, and always confirm deadlines and application instructions with the official provider."
+  },
+  {
+    category: "Internships",
+    slug: "internships",
+    title: "Internships and Graduate Opportunities",
+    description: "Find internship opportunities, graduate placements and practical experience programmes in Nigeria and internationally.",
+    intro: "Explore internships and practical experience opportunities that can help students, graduates and early-career professionals build skills. Review each listing carefully and use the official organisation link to confirm requirements and apply."
+  },
+  {
+    category: "Grants",
+    slug: "grants",
+    title: "Grants and Funding Opportunities",
+    description: "Discover grants, funding calls and financial support opportunities. Check eligibility, application requirements and official deadlines.",
+    intro: "Browse grants and funding opportunities for eligible individuals, businesses, researchers and organisations. Funding criteria vary, so read each official call carefully and verify all application requirements before submitting."
+  },
+  {
+    category: "Training",
+    slug: "training",
+    title: "Training and Skills Development Opportunities",
+    description: "Explore professional training, skills development courses and learning programmes in Nigeria and beyond.",
+    intro: "Find training programmes and skills-development opportunities to support your personal and professional growth. Check the programme format, eligibility, costs and dates directly with the training provider."
+  }
+];
+const today = new Date().toISOString().slice(0, 10);
+for (const page of categoryPages) {
+  const matching = rowsAll.filter(x =>
+    x.category === page.category && (!x.deadline || String(x.deadline).slice(0, 10) >= today)
+  );
+  const pageUrl = base + page.slug + "/";
+  const cards = matching.map(x => {
+    const itemUrl = base + "opportunities/" + encodeURIComponent(x.id) + "/";
+    const summary = clean(x.description).slice(0, 230);
+    return `<article class="opp-card">
+      <span class="tag">${esc(x.category)}</span>
+      <h2><a href="${esc(itemUrl)}">${esc(x.title)}</a></h2>
+      <p class="org">${esc(x.organization || "")}</p>
+      <p>${esc(summary)}${summary.length >= 230 ? "…" : ""}</p>
+      <p class="category-meta">${x.location ? "Location: " + esc(x.location) + " · " : ""}Deadline: ${esc(date(x.deadline))}</p>
+      <a class="details-link" href="${esc(itemUrl)}">View opportunity details ↗</a>
+    </article>`;
+  }).join("\\n");
+  const categoryHtml = `<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(page.title)} | IMI DIGITAL HUB</title>
+<meta name="description" content="${esc(page.description)}">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="${esc(pageUrl)}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="IMI DIGITAL HUB">
+<meta property="og:title" content="${esc(page.title)} | IMI DIGITAL HUB">
+<meta property="og:description" content="${esc(page.description)}"><meta property="og:url" content="${esc(pageUrl)}">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="${esc(page.title)} | IMI DIGITAL HUB">
+<meta name="twitter:description" content="${esc(page.description)}">
+<meta name="theme-color" content="#102a43">
+<script type="application/ld+json">${JSON.stringify({
+    "@context":"https://schema.org",
+    "@type":"CollectionPage",
+    "name":page.title + " | IMI DIGITAL HUB",
+    "description":page.description,
+    "url":pageUrl,
+    "isPartOf":{"@type":"WebSite","name":"IMI DIGITAL HUB","url":base},
+    "mainEntity":{"@type":"ItemList","numberOfItems":matching.length,"itemListElement":matching.map((x,i)=>({
+      "@type":"ListItem","position":i+1,"url":base+"opportunities/"+encodeURIComponent(x.id)+"/","name":clean(x.title)
+    }))}
+  }).replace(/</g,"\\\\u003c")}</script>
+<link rel="stylesheet" href="../styles.css">
+<style>
+.category-page{max-width:1100px;margin:42px auto;padding:0 22px 60px}
+.category-page h1{font-size:clamp(30px,5vw,44px);line-height:1.15;color:#102a43;margin:12px 0}
+.category-intro{max-width:820px;color:#526574;line-height:1.8;margin:0 0 28px}
+.category-page .opportunity-grid{margin-top:22px}
+.category-page .opp-card h2{font-size:18px;line-height:1.35;margin:15px 0 6px}
+.category-page .opp-card h2 a{color:#102a43;text-decoration:none}
+.category-page .opp-card h2 a:hover{color:#176b87}
+.category-page .opp-card p{font-size:13px;color:#526574}
+.category-meta{font-size:11px!important;color:#687987!important}
+.category-empty{padding:28px;border:1px solid #e1e9ec;border-radius:12px;color:#526574;background:#f7fafb}
+.category-back{display:inline-block;margin-top:28px;color:#176b87;font-weight:700;text-decoration:none}
+</style></head><body>
+<header class="topbar"><a class="brand" href="../"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Jobs &amp; Opportunities</small></span></a><nav><a href="../#opportunities">Explore</a><a href="../#categories">Categories</a><a href="../#about">About</a></nav></header>
+<main class="category-page">
+<p class="eyebrow dark">EXPLORE BY CATEGORY</p>
+<h1>${esc(page.title)}</h1>
+<p class="category-intro">${esc(page.intro)}</p>
+<p class="result-count">${matching.length} current listing${matching.length === 1 ? "" : "s"}</p>
+<div class="opportunity-grid">${cards || '<p class="category-empty">There are no current published listings in this category. Please check back soon or browse all opportunities.</p>'}</div>
+<a class="category-back" href="../#opportunities">← Browse all jobs and opportunities</a>
+<p class="demo-note">Confirm eligibility, deadlines, fees and application instructions with the official provider before applying.</p>
+</main>
+<footer><a class="brand footer-brand" href="../"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Building digital possibilities</small></span></a><p>© IMI DIGITAL HUB. All rights reserved.</p></footer>
+</body></html>`;
+  const outDir = path.join(page.slug);
+  fs.mkdirSync(outDir, {recursive:true});
+  fs.writeFileSync(path.join(outDir,"index.html"), categoryHtml);
+  sitemap.push({loc:pageUrl,priority:"0.9"});
+}
+
 const xmlEscape = value => String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
 const xml = ['<?xml version="1.0" encoding="UTF-8"?>','<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',...sitemap.map(item=>[
 "  <url>",`    <loc>${xmlEscape(item.loc)}</loc>`,item.lastmod ? `    <lastmod>${xmlEscape(new Date(item.lastmod).toISOString())}</lastmod>` : "",`    <priority>${item.priority}</priority>`,"  </url>"
