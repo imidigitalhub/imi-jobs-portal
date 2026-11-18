@@ -45,6 +45,14 @@ for (const x of rowsAll) {
   ].filter(([,v]) => v);
   const image = x.image_url ? `<img class="listing-image" src="${esc(x.image_url)}" alt="${esc(x.title)}" loading="lazy" decoding="async">` : "";
   const applyUrl = x.application_url || x.source_url || "";
+  const shareMessage = [clean(x.title), "Organisation: " + (x.organization || "Not specified"), "Category: " + (x.category || "Opportunity"), "Deadline: " + date(x.deadline), "", "View this opportunity on IMI DIGITAL HUB:", pageUrl].join("\\n");
+  const shareEncodedMessage = encodeURIComponent(shareMessage);
+  const shareEncodedUrl = encodeURIComponent(pageUrl);
+  const shareButtons = `<div class="detail-actions">
+    <a class="whatsapp-share" href="https://wa.me/?text=${shareEncodedMessage}" data-analytics-event="share_whatsapp" data-opportunity-id="${esc(x.id)}" data-opportunity-title="${esc(x.title)}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+    <a class="telegram-share" href="https://t.me/share/url?url=${shareEncodedUrl}&amp;text=${shareEncodedMessage}" data-analytics-event="share_telegram" data-opportunity-id="${esc(x.id)}" data-opportunity-title="${esc(x.title)}" target="_blank" rel="noopener noreferrer">Share on Telegram</a>
+    <a class="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=${shareEncodedUrl}&amp;quote=${encodeURIComponent(shareMessage)}" data-analytics-event="share_facebook" data-opportunity-id="${esc(x.id)}" data-opportunity-title="${esc(x.title)}" target="_blank" rel="noopener noreferrer">Share on Facebook</a>
+  </div>`;
   const bodyFields = fields.map(([label,value]) => `<section class="field"><h2>${esc(label)}</h2><p>${esc(label === "Deadline" ? value : value)}</p></section>`).join("\n");
   const structured = {
     "@context":"https://schema.org",
@@ -104,7 +112,7 @@ ${x.image_url ? `<meta name="twitter:image" content="${esc(x.image_url)}">` : ""
 <article><p><span class="tag">${esc(x.category || "Opportunity")}</span></p>${image}<h1>${esc(x.title)}</h1><p><strong>${esc(x.organization || "")}</strong></p>
 ${bodyFields}
 ${applyUrl ? `<p><a class="seo-apply" href="${esc(applyUrl)}" data-analytics-event="application_click" data-opportunity-id="${esc(x.id)}" data-opportunity-title="${esc(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a></p>` : ""}
-<p class="demo-note">Confirm eligibility, deadlines and application details with the official organisation before applying.</p>
+${shareButtons}\n<p class="demo-note">Confirm eligibility, deadlines and application details with the official organisation before applying.</p>
 <p><a href="../../#opportunities">← Browse more jobs and opportunities</a></p></article></main>
 <footer><a class="brand footer-brand" href="../../"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Building digital possibilities</small></span></a><p>© IMI DIGITAL HUB. All rights reserved.</p></footer>
 </body></html>`;
