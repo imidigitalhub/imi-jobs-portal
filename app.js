@@ -8,7 +8,7 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"
 const niceDate = value => value ? new Date(value + (value.length === 10 ? "T00:00:00" : "")).toLocaleDateString() : "Not specified";
 const localToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 function opportunityUrl(x) {
-  return new URL("opportunity.html?id=" + encodeURIComponent(x.id), window.location.href).href;
+  return new URL("opportunities/" + encodeURIComponent(x.id) + "/", window.location.href).href;
 }
 function whatsappShareUrl(x) {
   const pageUrl = opportunityUrl(x);
