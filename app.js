@@ -1,5 +1,5 @@
 const supabaseClient = window.supabase.createClient(window.IMI_SUPABASE_URL, window.IMI_SUPABASE_PUBLISHABLE_KEY);
-let category = "All", query = "", locationFilter = "", opportunities = [];
+let category = "All", query = "", locationFilter = "", employmentFilter = "", opportunities = [];
 const grid = document.getElementById("opportunityGrid");
 const empty = document.getElementById("emptyState");
 const featuredSection = document.getElementById("featuredSection");
@@ -48,16 +48,30 @@ function facebookShareUrl(x) {
   return "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(pageUrl) + "&quote=" + encodeURIComponent(quote);
 }
 function filteredItems() {
-  return opportunities.filter(x =>
-    (!x.deadline || x.deadline >= localToday()) &&
-    (category === "All" || x.category === category) &&
-    (!query || [x.title,x.organization,x.category,x.description,x.location].join(" ").toLowerCase().includes(query)) &&
-    (!locationFilter || x.location === locationFilter || (locationFilter === "International" && x.location !== "Nigeria"))
-  );
+  return opportunities.filter(x => {
+    const location = String(x.location || "").toLowerCase();
+    const employment = String(x.employment_type || "").toLowerCase();
+    const searchText = [x.title,x.organization,x.category,x.description,x.location,x.employment_type].join(" ").toLowerCase();
+    const matchesLocation = !locationFilter ||
+      (locationFilter === "Nigeria" && location.includes("nigeria")) ||
+      (locationFilter === "Remote" && (location.includes("remote") || employment.includes("remote"))) ||
+      (locationFilter === "International" && !location.includes("nigeria"));
+    return (!x.deadline || x.deadline >= localToday()) &&
+      (category === "All" || x.category === category) &&
+      (!query || searchText.includes(query)) &&
+      matchesLocation &&
+      (!employmentFilter || employment === employmentFilter.toLowerCase());
+  });
 }
 function render() {
   let items = filteredItems();
-  if (document.getElementById("sortFilter").value === "title") items.sort((a,b) => a.title.localeCompare(b.title));
+  const sortBy = document.getElementById("sortFilter").value;
+  if (sortBy === "title") items.sort((a,b) => a.title.localeCompare(b.title));
+  if (sortBy === "deadline") items.sort((a,b) => {
+    if (!a.deadline) return 1;
+    if (!b.deadline) return -1;
+    return a.deadline.localeCompare(b.deadline);
+  });
   grid.innerHTML = items.map(x => {
     const details = [x.location, x.employment_type].filter(Boolean).map(escapeHtml).join(" • ");
     const link = x.application_url || x.source_url;
@@ -109,6 +123,9 @@ async function loadOpportunities() {
     return;
   }
   opportunities = data || [];
+  const employmentSelect = document.getElementById("employmentFilter");
+  const employmentTypes = [...new Set(opportunities.map(x => String(x.employment_type || "").trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+  employmentSelect.innerHTML = '<option value="">All types</option>' + employmentTypes.map(type => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join("");
   renderFeatured();
   render();
 }
@@ -120,13 +137,23 @@ document.getElementById("searchForm").addEventListener("submit", e => {
   render();
   document.getElementById("opportunities").scrollIntoView({behavior:"smooth"});
 });
+document.getElementById("searchInput").addEventListener("input", e => {
+  query = e.target.value.trim().toLowerCase();
+  render();
+});
+document.getElementById("locationFilter").addEventListener("change", e => { locationFilter = e.target.value; render(); });
+document.getElementById("employmentFilter").addEventListener("change", e => { employmentFilter = e.target.value; render(); });
 document.getElementById("sortFilter").addEventListener("change", render);
-document.getElementById("clearFilters").addEventListener("click", () => {
-  query = ""; locationFilter = ""; category = "All";
+function clearAllFilters() {
+  query = ""; locationFilter = ""; employmentFilter = ""; category = "All";
   document.getElementById("searchInput").value = "";
   document.getElementById("locationFilter").value = "";
+  document.getElementById("employmentFilter").value = "";
+  document.getElementById("sortFilter").value = "newest";
   setCategory("All");
-});
+}
+document.getElementById("clearFilters").addEventListener("click", clearAllFilters);
+document.getElementById("clearFiltersTop").addEventListener("click", clearAllFilters);
 const menuButton = document.getElementById("menuBtn");
 const mainNav = document.getElementById("mainNav");
 menuButton.addEventListener("click", () => {
