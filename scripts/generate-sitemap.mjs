@@ -45,7 +45,7 @@ for (const x of rowsAll) {
   ].filter(([,v]) => v);
   const image = x.image_url ? `<img class="listing-image" src="${esc(x.image_url)}" alt="${esc(x.title)}" loading="lazy" decoding="async">` : "";
   const applyUrl = x.application_url || x.source_url || "";
-  const shareMessage = [clean(x.title), "Organisation: " + (x.organization || "Not specified"), "Category: " + (x.category || "Opportunity"), "Deadline: " + date(x.deadline), "", "View this opportunity on IMI DIGITAL HUB:", pageUrl].join("\\n");
+  const shareMessage = [clean(x.title), "Organisation: " + (x.organization || "Not specified"), "Category: " + (x.category || "Opportunity"), "Deadline: " + date(x.deadline), "", "View this opportunity on IMI DIGITAL HUB:", pageUrl].join("\n");
   const shareEncodedMessage = encodeURIComponent(shareMessage);
   const shareEncodedUrl = encodeURIComponent(pageUrl);
   const shareButtons = `<div class="detail-actions">
