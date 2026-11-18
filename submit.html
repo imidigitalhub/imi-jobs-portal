@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Share a genuine job, scholarship, internship, grant or training opportunity with IMI DIGITAL HUB for review.">
+<meta name="theme-color" content="#102a43"><title>Submit an Opportunity | IMI DIGITAL HUB</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.submit-wrap{max-width:850px;margin:42px auto;padding:0 20px 60px}.submit-panel{background:#fff;border:1px solid #dbe3ea;border-radius:14px;padding:clamp(20px,4vw,34px);box-shadow:0 8px 28px #18384a0a}.submit-form{display:grid;grid-template-columns:1fr 1fr;gap:15px}.submit-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:#243b4b}.submit-form input,.submit-form select,.submit-form textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;font-weight:400;box-sizing:border-box}.submit-form textarea{min-height:125px}.submit-form .wide{grid-column:1/-1}.submit-form button{border:0;border-radius:8px;padding:13px 18px;background:#102a43;color:#fff;font-weight:800;cursor:pointer;min-height:46px}.submit-notice{padding:13px;border-radius:8px;background:#eef5ff;margin:14px 0}.honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}@media(max-width:620px){.submit-form{grid-template-columns:1fr}.submit-form .wide{grid-column:auto}}
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="./"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Jobs & Opportunities</small></span></a><nav id="mainNav"><a href="./">Explore opportunities</a><a href="./saved.html">Saved opportunities</a><a href="./admin.html">Admin</a></nav><button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">☰</button></header>
+<main class="submit-wrap">
+<section class="submit-panel">
+<span class="eyebrow dark">HELP SOMEONE FIND THEIR NEXT STEP</span>
+<h1 style="color:#102a43;margin:8px 0">Submit an opportunity</h1>
+<p>Found a genuine job vacancy, scholarship, internship, grant or training programme? Share it with us. You do not need an account.</p>
+<div class="submit-notice"><strong>Important:</strong> Every submission is checked by our admin team. It will not appear publicly until it has been verified and approved. Please provide an official source link. Never submit opportunities that require suspicious payments or make unrealistic promises.</div>
+<div id="submitMessage" class="submit-notice" role="status" aria-live="polite" hidden></div>
+<form id="publicSubmitForm" class="submit-form">
+<label>Opportunity title *<input id="title" maxlength="180" required placeholder="e.g. Graduate Trainee Programme"></label>
+<label>Organisation / employer *<input id="organization" maxlength="180" required placeholder="Organisation name"></label>
+<label>Category *<select id="category" required><option value="">Choose category</option><option>Jobs</option><option>Scholarships</option><option>Internships</option><option>Grants</option><option>Training</option></select></label>
+<label>Location<input id="location" maxlength="180" placeholder="e.g. Abuja, Nigeria, Remote"></label>
+<label>Opportunity / employment type<input id="employment_type" maxlength="120" placeholder="e.g. Full-time, Online, Undergraduate"></label>
+<label>Application deadline<input id="deadline" type="date"></label>
+<label class="wide">Description, requirements and eligibility *<textarea id="description" maxlength="10000" required placeholder="Describe the opportunity and who can apply."></textarea></label>
+<label>Official source link *<input id="source_url" type="url" required placeholder="https://official-organisation-website..."></label>
+<label>Direct application link (if different)<input id="application_url" type="url" placeholder="https://"></label>
+<label class="wide">How to apply (optional)<textarea id="application_instructions" maxlength="5000" placeholder="Briefly explain the application steps."></textarea></label>
+<label>Your name for public credit *<input id="contributor_name" maxlength="100" required placeholder="How should we acknowledge you?"></label>
+<label>Your email or WhatsApp (optional, kept private)<input id="contributor_contact" maxlength="180" placeholder="For verification questions only"></label>
+<label class="honeypot" aria-hidden="true">Leave this field empty<input id="website" tabindex="-1" autocomplete="off"></label>
+<p class="wide" style="font-size:12px;color:#687987">By submitting, you confirm that the information is accurate to the best of your knowledge and that IMI DIGITAL HUB may edit it for clarity and safety. Your chosen contributor name may be shown publicly if the opportunity is approved. Your contact details will not be published.</p>
+<div class="wide"><button id="submitButton" type="submit">Send for admin approval</button></div>
+</form>
+</section>
+</main>
+<footer><a class="brand" href="./"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Building digital possibilities</small></span></a><p>© <span id="year"></span> IMI DIGITAL HUB. All rights reserved.</p><a href="./">Back to portal ↗</a></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="supabase-config.js"></script><script defer src="submit.js"></script>
+</body></html>
