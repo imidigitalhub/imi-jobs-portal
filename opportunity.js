@@ -21,7 +21,7 @@ async function loadOpportunity() {
   if (error || !x) { root.textContent = "This opportunity could not be found. It may have been unpublished or the link may be incorrect."; return; }
   const pageTitle = x.title + " | IMI DIGITAL HUB";
   const plainDescription = String(x.description || x.title).replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim().slice(0, 160);
-  const canonicalUrl = window.location.origin + window.location.pathname + "?id=" + encodeURIComponent(x.id);
+  const canonicalUrl = window.location.origin + window.location.pathname.replace(/opportunity\\.html$/, "opportunities/" + encodeURIComponent(x.id) + "/").replace(/\\/$/, "") + (window.location.pathname.endsWith("/") ? "" : "/");
   document.title = pageTitle;
   function setMeta(selector, attribute, value) {
     const node = document.querySelector(selector);
