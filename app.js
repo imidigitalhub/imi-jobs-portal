@@ -104,7 +104,7 @@ function render() {
     const link = x.application_url || x.source_url;
     return `<article class="opp-card">
       <div class="opp-top"><span class="tag">${escapeHtml(x.category)}</span><span class="demo-tag" style="background:#e7f7ed;color:#176b3a">PUBLISHED</span></div>${saveButton(x)}\n      ${x.image_url ? `<img class="opp-image" src="${escapeHtml(x.image_url)}" alt="${escapeHtml(x.title)}" loading="lazy" style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin:10px 0;">` : ""}
-      <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>
+      <h3>${escapeHtml(x.title)}</h3><div class="org">${escapeHtml(x.organization)}</div>${x.contributor_name ? `<div class="org contributor-credit">Shared by ${escapeHtml(x.contributor_name)}</div>` : ""}
       <div class="opp-meta"><span>⌖ ${details || "Details on listing"}</span></div>
       <p>${escapeHtml(x.description).slice(0,260)}${x.description && x.description.length>260 ? "…" : ""}</p>
       ${x.salary_or_funding ? `<p><strong>Salary / funding:</strong> ${escapeHtml(x.salary_or_funding)}</p>` : ""}
@@ -150,7 +150,7 @@ function renderFeatured() {
 }
 async function loadOpportunities() {
   grid.innerHTML = '<p>Loading published opportunities…</p>';
-  const { data, error } = await supabaseClient.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,created_at,is_featured").eq("is_published", true).order("created_at", {ascending:false});
+  const { data, error } = await supabaseClient.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,created_at,is_featured,contributor_name").eq("is_published", true).order("created_at", {ascending:false});
   if (error) {
     grid.innerHTML = '<p>We could not load opportunities right now. Please refresh the page later.</p>';
     document.getElementById("resultCount").textContent = "Unable to load listings";
