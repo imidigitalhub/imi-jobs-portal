@@ -76,6 +76,14 @@ ${x.image_url ? `<meta property="og:image" content="${esc(x.image_url)}">` : ""}
 <meta name="twitter:description" content="${esc(description)}">
 ${x.image_url ? `<meta name="twitter:image" content="${esc(x.image_url)}">` : ""}
 <meta name="theme-color" content="#102a43">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8Z5D32ETJS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8Z5D32ETJS');
+</script>
 <script type="application/ld+json">${JSON.stringify(structured).replace(/</g,"\\u003c")}</script>
 <link rel="stylesheet" href="../../styles.css">
 <style>.seo-page{max-width:900px;margin:38px auto;padding:0 22px 50px}.breadcrumbs{font-size:13px;margin:0 0 22px;color:#687987}.breadcrumbs a{color:#176b87}.seo-page h1{font-size:clamp(28px,5vw,42px);line-height:1.2;color:#102a43}.seo-page .field{border-bottom:1px solid #e1e9ec;padding:14px 0}.seo-page .field h2{font-size:16px;color:#102a43;margin:0 0 6px}.seo-page .field p{margin:0;white-space:pre-wrap}.listing-image{width:100%;max-height:420px;object-fit:cover;border-radius:12px;margin:15px 0}.seo-apply{display:inline-block;background:#102a43;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;margin:20px 0}</style>
