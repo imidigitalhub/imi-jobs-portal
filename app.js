@@ -72,7 +72,8 @@ function facebookShareUrl(x) {
   return "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(pageUrl) + "&quote=" + encodeURIComponent(quote);
 }
 function filteredItems() {
-  return opportunities.filter(x => {\n    if (savedOnly && !savedIds.includes(String(x.id))) return false;
+  return opportunities.filter(x => {
+    if (savedOnly && !savedIds.includes(String(x.id))) return false;
     const location = String(x.location || "").toLowerCase();
     const employment = String(x.employment_type || "").toLowerCase();
     const searchText = [x.title,x.organization,x.category,x.description,x.location,x.employment_type].join(" ").toLowerCase();
@@ -113,13 +114,15 @@ function render() {
       <div class="opp-bottom"><span class="deadline">Deadline: ${niceDate(x.deadline)}</span><a class="details-link" href="${escapeHtml(opportunityUrl(x))}">View details ↗</a>${link ? `<a href="${escapeHtml(link)}" data-analytics-event="application_click" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}</div><a class="whatsapp-share" href="${escapeHtml(whatsappShareUrl(x))}" data-analytics-event="share_whatsapp" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on WhatsApp">↗ Share on WhatsApp</a><a class="telegram-share" href="${escapeHtml(telegramShareUrl(x))}" data-analytics-event="share_telegram" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Telegram">↗ Share on Telegram</a><a class="facebook-share" href="${escapeHtml(facebookShareUrl(x))}" data-analytics-event="share_facebook" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer" aria-label="Share ${escapeHtml(x.title)} on Facebook">↗ Share on Facebook</a>
     </article>`;
   }).join("");
-  empty.hidden = items.length !== 0;\n  grid.hidden = items.length === 0;\n  if (savedOnly && items.length === 0) { empty.querySelector("h3").textContent = "No saved opportunities yet"; empty.querySelector("p").textContent = "Tap Save opportunity on any listing to keep it here."; } else { empty.querySelector("h3").textContent = "No matching opportunities"; empty.querySelector("p").textContent = "Try another keyword or category."; }
+  empty.hidden = items.length !== 0;
+  grid.hidden = items.length === 0;\n  if (savedOnly && items.length === 0) { empty.querySelector("h3").textContent = "No saved opportunities yet"; empty.querySelector("p").textContent = "Tap Save opportunity on any listing to keep it here."; } else { empty.querySelector("h3").textContent = "No matching opportunities"; empty.querySelector("p").textContent = "Try another keyword or category."; }
   document.getElementById("resultCount").textContent = totalItems > visibleItems.length
     ? `Showing ${visibleItems.length} of ${totalItems} opportunities`
     : `${totalItems} available opportunit${totalItems===1?"y":"ies"}`;
   const loadMoreButton = document.getElementById("loadMoreBtn");
   loadMoreButton.hidden = visibleItems.length >= totalItems;
-  loadMoreButton.textContent = `Load more opportunities (${totalItems - visibleItems.length} remaining)`;\n  updateSavedControl();
+  loadMoreButton.textContent = `Load more opportunities (${totalItems - visibleItems.length} remaining)`;
+  updateSavedControl();
 }
 function setCategory(value) {
   category = value;
