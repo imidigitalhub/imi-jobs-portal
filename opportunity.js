@@ -9,9 +9,9 @@ function shareLinks(x) {
   const encodedUrl = encodeURIComponent(pageUrl);
   const encodedMessage = encodeURIComponent(message);
   return `<div class="detail-actions">
-    <a class="whatsapp-share" href="https://wa.me/?text=${encodedMessage}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
-    <a class="telegram-share" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedMessage}" target="_blank" rel="noopener noreferrer">Share on Telegram</a>
-    <a class="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodeURIComponent(message)}" target="_blank" rel="noopener noreferrer">Share on Facebook</a>
+    <a class="whatsapp-share" href="https://wa.me/?text=${encodedMessage}" data-analytics-event="share_whatsapp" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+    <a class="telegram-share" href="https://t.me/share/url?url=${encodedUrl}&text=${encodedMessage}" data-analytics-event="share_telegram" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Share on Telegram</a>
+    <a class="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodeURIComponent(message)}" data-analytics-event="share_facebook" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Share on Facebook</a>
   </div>`;
 }
 async function loadOpportunity() {
