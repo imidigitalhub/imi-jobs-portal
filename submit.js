@@ -29,7 +29,6 @@ form.addEventListener("submit",async event=>{
     application_url:application||null,
     application_instructions:$("application_instructions").value.trim()||null,
     contributor_name:$("contributor_name").value.trim(),
-    contributor_contact:$("contributor_contact").value.trim()||null,
     submission_status:"pending",
     is_published:false,
     is_featured:false
