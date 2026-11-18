@@ -17,7 +17,7 @@ function shareLinks(x) {
 async function loadOpportunity() {
   const id = new URLSearchParams(window.location.search).get("id");
   if (!id) { root.textContent = "No opportunity was specified. Please return to the opportunities list."; return; }
-  const {data:x,error} = await db.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,is_published").eq("id",id).eq("is_published",true).maybeSingle();
+  const {data:x,error} = await db.from("opportunities").select("id,title,organization,category,location,employment_type,description,eligibility,salary_or_funding,benefits,application_instructions,image_url,application_url,source_url,deadline,is_published,contributor_name").eq("id",id).eq("is_published",true).maybeSingle();
   if (error || !x) { root.textContent = "This opportunity could not be found. It may have been unpublished or the link may be incorrect."; return; }
   const pageTitle = x.title + " | IMI DIGITAL HUB";
   const plainDescription = String(x.description || x.title).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
@@ -68,7 +68,7 @@ async function loadOpportunity() {
     <div style="margin-top:22px"><span class="tag">${escapeHtml(x.category)}</span></div>
     ${x.image_url ? `<img src="${escapeHtml(x.image_url)}" alt="${escapeHtml(x.title)}" style="width:100%;max-height:360px;object-fit:cover;border-radius:10px;margin-top:20px">` : ""}
     <h1>${escapeHtml(x.title)}</h1>
-    <p class="detail-org">${escapeHtml(x.organization)}</p>
+    <p class="detail-org">${escapeHtml(x.organization)}</p>${x.contributor_name ? `<p class="detail-org contributor-credit">Opportunity shared by ${escapeHtml(x.contributor_name)}</p>` : ""}
     <div class="detail-fields">${fields.map(([label,value])=>`<div class="detail-field"><strong>${escapeHtml(label)}</strong><div class="${label==="Description"?"detail-description":""}">${escapeHtml(label==="Deadline"?value:value)}</div></div>`).join("")}</div>
     <div class="detail-actions">${apply ? `<a class="apply-btn" href="${escapeHtml(apply)}" data-analytics-event="application_click" data-opportunity-id="${escapeHtml(x.id)}" data-opportunity-title="${escapeHtml(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a>` : ""}<a class="back-btn" href="index.html#opportunities">Browse more opportunities</a></div>
     ${shareLinks(x)}
