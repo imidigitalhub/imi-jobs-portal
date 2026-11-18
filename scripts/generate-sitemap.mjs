@@ -83,6 +83,16 @@ ${x.image_url ? `<meta name="twitter:image" content="${esc(x.image_url)}">` : ""
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-8Z5D32ETJS');
+  document.addEventListener('click', function(event) {
+    const link = event.target.closest('a[data-analytics-event]');
+    if (!link || typeof gtag !== 'function') return;
+    gtag('event', link.dataset.analyticsEvent, {
+      opportunity_id: link.dataset.opportunityId || '',
+      opportunity_title: link.dataset.opportunityTitle || '',
+      link_url: link.href,
+      transport_type: 'beacon'
+    });
+  });
 </script>
 <script type="application/ld+json">${JSON.stringify(structured).replace(/</g,"\\u003c")}</script>
 <link rel="stylesheet" href="../../styles.css">
@@ -93,7 +103,7 @@ ${x.image_url ? `<meta name="twitter:image" content="${esc(x.image_url)}">` : ""
 <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../../">Home</a> › <a href="../../#opportunities">Opportunities</a> › <span>${esc(x.title)}</span></nav>
 <article><p><span class="tag">${esc(x.category || "Opportunity")}</span></p>${image}<h1>${esc(x.title)}</h1><p><strong>${esc(x.organization || "")}</strong></p>
 ${bodyFields}
-${applyUrl ? `<p><a class="seo-apply" href="${esc(applyUrl)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a></p>` : ""}
+${applyUrl ? `<p><a class="seo-apply" href="${esc(applyUrl)}" data-analytics-event="application_click" data-opportunity-id="${esc(x.id)}" data-opportunity-title="${esc(x.title)}" target="_blank" rel="noopener noreferrer">Apply / official source ↗</a></p>` : ""}
 <p class="demo-note">Confirm eligibility, deadlines and application details with the official organisation before applying.</p>
 <p><a href="../../#opportunities">← Browse more jobs and opportunities</a></p></article></main>
 <footer><a class="brand footer-brand" href="../../"><span class="brand-mark">IMI</span><span>IMI <b>DIGITAL HUB</b><small>Building digital possibilities</small></span></a><p>© IMI DIGITAL HUB. All rights reserved.</p></footer>
