@@ -22,3 +22,8 @@ button,a,select{touch-action:manipulation}
 .clear-filter-btn{font-size:11px;padding:8px 12px;white-space:nowrap}
 .filter-row{flex-wrap:wrap}
 @media(max-width:620px){.employment-filter{width:100%;justify-content:space-between}.employment-filter select{flex:1;max-width:none}.clear-filter-btn{min-height:42px}}
+
+/* Load-more listing control */
+.load-more-btn{display:block;margin:28px auto 0;padding:12px 22px;border:1px solid var(--blue);border-radius:8px;background:#fff;color:var(--blue);font:inherit;font-size:12px;font-weight:800;cursor:pointer;min-height:44px}
+.load-more-btn:hover{background:#eef8fa}
+.load-more-btn[hidden]{display:none}
