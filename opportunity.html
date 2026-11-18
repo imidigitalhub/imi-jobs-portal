@@ -23,6 +23,16 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-8Z5D32ETJS');
+  document.addEventListener('click', function(event) {
+    const link = event.target.closest('a[data-analytics-event]');
+    if (!link || typeof gtag !== 'function') return;
+    gtag('event', link.dataset.analyticsEvent, {
+      opportunity_id: link.dataset.opportunityId || '',
+      opportunity_title: link.dataset.opportunityTitle || '',
+      link_url: link.href,
+      transport_type: 'beacon'
+    });
+  });
 </script>
 </head>
 <body>
